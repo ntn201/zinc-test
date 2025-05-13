@@ -26,4 +26,4 @@ jobs:
 
       - name: Run unit tests
         run: |
-          docker run --rm app:latest python -m pytest
+          python -m pytest
