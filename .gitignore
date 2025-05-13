@@ -19,5 +19,4 @@ poetry.lock
 
 # pg-data
 pg-data/
-migrations/versions/
 compose.yml
