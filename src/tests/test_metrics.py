@@ -1,14 +1,17 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 from src.app import app
-from src.utils.db import get_session
+from src.utils.db import Database
 
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import SQLModel
 from sqlmodel.pool import StaticPool
+
 from sqlmodel import select, text
+
 from src.controllers.import_sales import ImportSalesController
+
 from src.models.order import Order
 from src.models.order_item import OrderItem
 from src.models.product import Product
@@ -22,13 +25,8 @@ async def get_session_override():
     async with AsyncSession(async_engine) as session:
         yield session
 
-async def create_tables():
-    async with async_engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
-
 @pytest.fixture(autouse=True)
 async def setup_database():
-    await create_tables()
     async with async_engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
@@ -45,14 +43,10 @@ async def setup_database():
             await session.exec(query)
         await session.commit()
 
-@pytest.fixture(name="session")
-async def session_fixture():
-    async with AsyncSession(async_engine) as session:
-        yield session
 
 @pytest.fixture(name="client")
 async def client_fixture():
-    app.dependency_overrides[get_session] = get_session_override
+    app.dependency_overrides[Database.get_session] = get_session_override
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
@@ -60,7 +54,7 @@ async def client_fixture():
     app.dependency_overrides.clear()
 
 @pytest.mark.asyncio
-async def test_get_total_revenue(client, session):
+async def test_get_total_revenue(client):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
@@ -74,7 +68,7 @@ async def test_get_total_revenue(client, session):
         }
 
 @pytest.mark.asyncio
-async def test_get_total_revenue_daily(client, session):
+async def test_get_total_revenue_daily(client):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:

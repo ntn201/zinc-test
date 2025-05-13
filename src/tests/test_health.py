@@ -1,7 +1,7 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 from src.app import app
-from src.utils.db import get_session
+from src.utils.db import Database
 
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -17,8 +17,20 @@ async_engine = create_async_engine(
     "sqlite+aiosqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
 )
 
+async def get_session_override():
+    async with AsyncSession(async_engine) as session:
+        yield session
 
-async def test_health_check():
+@pytest.fixture(name="client")
+async def client_fixture():
+    app.dependency_overrides[Database.get_session] = get_session_override
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        yield client
+    app.dependency_overrides.clear()
+
+async def test_health_check(client):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:

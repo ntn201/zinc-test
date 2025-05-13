@@ -1,4 +1,4 @@
-from src.utils.db import get_session
+from src.utils.db import Database
 from sqlalchemy import text
 from sqlmodel.ext.asyncio.session import AsyncSession
 import logging
@@ -15,4 +15,3 @@ class HealthController:
         except Exception as e:
             logger.exception(e)
             return False
-    

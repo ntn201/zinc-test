@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.controllers.metrics import MetricsController
-from src.utils.db import get_session
+from src.utils.db import Database
 
 router = APIRouter(prefix="/metrics")
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/metrics")
 async def get_total_revenue(
     start: date,
     end: date,
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(Database.get_session)
 ):
     total_revenue, average_order_value = await MetricsController(session).get_revenue_metrics(start, end)
     return {
@@ -23,7 +23,7 @@ async def get_total_revenue(
 async def get_daily_revenue(
     start: date,
     end: date,
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(Database.get_session)
 ):
     daily_revenue = await MetricsController(session).get_daily_revenue(start, end)
     return daily_revenue

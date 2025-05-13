@@ -3,7 +3,6 @@ from datetime import date
 
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy import select, text, func
-from src.utils.db import get_session
 
 from src.models.order import Order
 

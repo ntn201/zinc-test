@@ -1,19 +1,27 @@
 from sqlmodel import SQLModel
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncEngine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.config import DATABASE_URL
 
-engine = create_async_engine(DATABASE_URL)
-async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+class Database:
+    engine = None
+    async_session = None
 
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
+    @classmethod
+    def init_engine(cls):
+        cls.engine = create_async_engine(DATABASE_URL)
+        cls.async_session = async_sessionmaker(
+            cls.engine,
+            class_=AsyncSession,
+            expire_on_commit=False
+        )
 
-async def get_session() -> AsyncSession:
-    async with async_session() as session:
-        yield session
+    @classmethod
+    async def get_session(cls) -> AsyncSession:
+        async with cls.async_session() as session:
+            yield session
 
-async def close_db():
-    await engine.dispose()
+    @classmethod
+    async def close_db(cls):
+        await cls.engine.dispose()
