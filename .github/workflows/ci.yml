@@ -8,6 +8,18 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,3 +41,8 @@ jobs:
           python -m pip install poetry
           poetry install
           poetry run pytest
+
+      - name: Run test migrations
+        run: |
+          export MIGRATION_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
+          poetry run alembic upgrade head
