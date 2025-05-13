@@ -1,0 +1,23 @@
+.idea/
+.pyc
+pycache/
+__pycache__/
+.DS_Store
+**/pycache
+*.py[cod]
+*.iml
+*.log
+
+.*vscode
+.env
+.venv/
+poetry.lock
+.pytest_cache/
+# logs
+*/logs/*
+.qodo
+
+# pg-data
+pg-data/
+migrations/versions/
+compose.yml

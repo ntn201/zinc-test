@@ -1,0 +1,25 @@
+services:
+  db:
+    image: bitnami/postgresql:17
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_POSTGRES_PASSWORD=postgres
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=tDBR4AG9ZKVLkJiMBSyYOv4aFQACYy3u
+      - POSTGRESQL_DATABASE=postgres
+    volumes:
+      - './pg-data:/bitnami/postgresql/data'
+    restart: always
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres

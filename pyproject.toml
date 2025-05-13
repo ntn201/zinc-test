@@ -1,0 +1,38 @@
+[project]
+name = "zinc-test"
+version = "1.0.0"
+description = ""
+authors = [
+    {name = "Nguyen Tran Nguyen",email = "nguyennt.works@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard] (>=0.115.12,<0.116.0)",
+    "uvicorn[standard] (>=0.34.2,<0.35.0)",
+    "redis (>=6.0.0,<7.0.0)",
+    "sqlmodel (>=0.0.24,<0.0.25)",
+    "pytest (>=8.3.5,<9.0.0)",
+    "asyncpg (>=0.30.0,<0.31.0)",
+    "sqlalchemy[asyncpg] (>=2.0.40,<3.0.0)",
+    "greenlet (>=3.2.2,<4.0.0)",
+    "alembic (>=1.15.2,<2.0.0)",
+    "aiofiles (>=24.1.0,<25.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "pytest-asyncio (>=0.26.0,<0.27.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "aiosqlite (>=0.21.0,<0.22.0)",
+    "mock (>=5.2.0,<6.0.0)",
+    "sentry-sdk (>=2.28.0,<3.0.0)",
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+package-mode = false
